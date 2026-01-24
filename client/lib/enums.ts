@@ -1,0 +1,36 @@
+export enum UserRole {
+  PROVIDER = 'PROVIDER',
+  SEEKER = 'SEEKER',
+}
+
+export enum LoginProvider {
+  EMAIL = 'EMAIL',
+  GOOGLE = 'GOOGLE',
+}
+
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER',
+}
+
+export enum BookingStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  REJECTED = 'REJECTED',
+}
+
+export enum OtpType {
+  EMAIL_VERIFICATION = 'EMAIL_VERIFICATION',
+  PHONE_VERIFICATION = 'PHONE_VERIFICATION',
+  PASSWORD_RESET = 'PASSWORD_RESET',
+  LOGIN_VERIFICATION = 'LOGIN_VERIFICATION',
+  TWO_FACTOR_AUTH = 'TWO_FACTOR_AUTH',
+}
+
+export enum OtpChannel {
+  EMAIL = 'EMAIL',
+  SMS = 'SMS',
+}
