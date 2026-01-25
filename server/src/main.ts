@@ -4,9 +4,14 @@ import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { HttpExceptionFilter } from './common/filters/http-client-exception.filter';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Configure Socket.IO adapter (required for WebSocket gateways)
+  app.useWebSocketAdapter(new IoAdapter(app));
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 8000;
   const CORS_ORIGINS = configService.get<string>('CORS_ORIGINS') || 'http://localhost:3000';

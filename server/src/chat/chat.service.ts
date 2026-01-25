@@ -5,7 +5,7 @@ import { ApiResponse } from 'src/common/types';
 import { throwError } from 'src/common/utils/helpers';
 import { User } from '@db';
 import { CreateChatDto, SendMessageDto } from './dto/chat.dto';
-import { CreateChatResponse, GetChatResponse, SendMessageResponse } from './types';
+import { CreateChatResponse, GetChatResponse, SendMessageResponse, GetAllChatsResponse } from './types';
 import { chatSelect, ChatSelect } from './queries';
 
 @Injectable()
@@ -14,26 +14,56 @@ export class ChatService {
 
   constructor(private readonly prismaService: PrismaService) {}
 
+  async getAllChats(user: User): Promise<ApiResponse<GetAllChatsResponse>> {
+    try {
+      const chats = await this.prismaService.chat.findMany({
+        where: {
+          OR: [{ userId: user.id }, { providerId: user.id }],
+        },
+        select: chatSelect,
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      });
+
+      return {
+        message: 'Chats retrieved successfully',
+        success: true,
+        data: { chats },
+      };
+    } catch (err) {
+      this.logger.error('Failed to get all chats', err.stack, ChatService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getAllChats',
+        userId: user.id,
+      });
+      throw throwError(err.message || 'Failed to get all chats', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async createChat(user: User, createChatDto: CreateChatDto): Promise<ApiResponse<CreateChatResponse>> {
     try {
-      const { providerId } = createChatDto;
-
-      if (user.id === providerId) {
-        throw throwError('You cannot create a chat with yourself', HttpStatus.BAD_REQUEST);
-      }
+      const { providerEmail } = createChatDto;
 
       const provider = await this.prismaService.user.findUnique({
-        where: { id: providerId },
-        select: { id: true },
+        where: { email: providerEmail },
+        select: { id: true, role: true },
       });
 
       if (!provider) throw throwError('Provider not found', HttpStatus.NOT_FOUND);
 
+      if (provider.role !== 'PROVIDER')
+        throw throwError('The specified user is not a provider', HttpStatus.BAD_REQUEST);
+
+      if (user.id === provider.id) throw throwError('You cannot create a chat with yourself', HttpStatus.BAD_REQUEST);
+
       const existingChat = await this.prismaService.chat.findFirst({
         where: {
           OR: [
-            { userId: user.id, providerId },
-            { userId: providerId, providerId: user.id },
+            { userId: user.id, providerId: provider.id },
+            { userId: provider.id, providerId: user.id },
           ],
         },
       });
@@ -55,7 +85,7 @@ export class ChatService {
       const chat = await this.prismaService.chat.create({
         data: {
           userId: user.id,
-          providerId,
+          providerId: provider.id,
         },
         select: chatSelect,
       });

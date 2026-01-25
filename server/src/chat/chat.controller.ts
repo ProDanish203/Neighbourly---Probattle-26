@@ -5,14 +5,27 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from '@db';
 import { ApiResponse } from 'src/common/types';
 import { ChatService } from './chat.service';
+import { ChatGateway } from './chat.gateway';
 import { CreateChatDto, SendMessageDto } from './dto/chat.dto';
-import { CreateChatResponse, GetChatResponse, SendMessageResponse } from './types';
+import { CreateChatResponse, GetChatResponse, SendMessageResponse, GetAllChatsResponse } from './types';
 
 @Controller('chat')
 @ApiTags('Chat')
 @UseGuards(AuthGuard)
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly chatGateway: ChatGateway,
+  ) {}
+
+  @ApiProperty({
+    title: 'Get All Chats',
+    description: 'Get all chats for the current user',
+  })
+  @Get()
+  async getAllChats(@CurrentUser() user: User): Promise<ApiResponse<GetAllChatsResponse>> {
+    return this.chatService.getAllChats(user);
+  }
 
   @ApiProperty({
     title: 'Create Chat',
@@ -51,6 +64,13 @@ export class ChatController {
     @CurrentUser() user: User,
     @Body() sendMessageDto: SendMessageDto,
   ): Promise<ApiResponse<SendMessageResponse>> {
-    return this.chatService.sendMessage(user, sendMessageDto);
+    const result = await this.chatService.sendMessage(user, sendMessageDto);
+
+    // Broadcast message to all clients in the chat room via socket
+    if (result.success && result.data?.message) {
+      this.chatGateway.broadcastMessage(sendMessageDto.chatId, result.data.message);
+    }
+
+    return result;
   }
 }

@@ -22,3 +22,7 @@ export interface GetChatResponse {
 export interface SendMessageResponse {
   message: MessageWithSender;
 }
+
+export interface GetAllChatsResponse {
+  chats: ChatWithUsers[];
+}

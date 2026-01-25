@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, IsUUID } from 'class-validator';
 
 export class CreateChatDto {
-  @IsNotEmpty({ message: 'Provider ID is required' })
-  @IsUUID('4', { message: 'Provider ID must be a valid UUID' })
-  @ApiProperty({ type: String, required: true, example: '123e4567-e89b-12d3-a456-426614174000' })
-  providerId: string;
+  @IsNotEmpty({ message: 'Provider email is required' })
+  @IsEmail({}, { message: 'Provider email must be a valid email address' })
+  @ApiProperty({ type: String, required: true, example: 'provider@example.com' })
+  providerEmail: string;
 }
 
 export class SendMessageDto {

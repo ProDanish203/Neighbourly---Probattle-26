@@ -25,6 +25,7 @@ interface AuthenticatedSocket extends Socket {
     credentials: true,
   },
   namespace: '/chat',
+  path: '/socket.io',
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -69,6 +70,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Cleanup if needed
   }
 
+  broadcastMessage(chatId: string, message: any) {
+    this.server.to(`chat:${chatId}`).emit('new-message', message);
+  }
+
   @SubscribeMessage('join-chat')
   async handleJoinChat(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() data: { chatId: string }) {
     if (!client.userId) return;
@@ -83,6 +88,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     client.join(`chat:${data.chatId}`);
+  }
+
+  @SubscribeMessage('leave-chat')
+  async handleLeaveChat(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() data: { chatId: string }) {
+    if (!client.userId) return;
+    client.leave(`chat:${data.chatId}`);
   }
 
   @SubscribeMessage('send-message')
