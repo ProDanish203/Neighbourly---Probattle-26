@@ -2,6 +2,7 @@ import { Prisma, User } from '@db';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { StorageService } from 'src/storage/storage.service';
+import { AppLoggerService } from 'src/common/services/logger.service';
 import { ApiResponse, MulterFile, QueryParams } from 'src/common/types';
 import { throwError } from 'src/common/utils/helpers';
 import { CreateServiceDto, UpdateServiceDto } from './dto/service.dto';
@@ -13,6 +14,8 @@ import { SERVICE_CONSTANTS } from 'src/common/lib/constants';
 
 @Injectable()
 export class ServiceService {
+  private readonly logger = new AppLoggerService(ServiceService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
@@ -169,6 +172,14 @@ export class ServiceService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve nearby services', err.stack, ServiceService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getNearbyServices',
+        userId: user.id,
+        query,
+      });
       throw throwError(
         err.message || 'Failed to retrieve nearby services',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,
@@ -195,10 +206,14 @@ export class ServiceService {
         }),
       ]);
 
-      if (!provider || !provider.isEmailVerified) throw throwError('Please verify your email to create a service', HttpStatus.BAD_REQUEST);
+      if (!provider || !provider.isEmailVerified)
+        throw throwError('Please verify your email to create a service', HttpStatus.BAD_REQUEST);
       if (!userProfile) throw throwError('Please complete your profile to create a service', HttpStatus.NOT_FOUND);
       if (!userProfile.longitude || !userProfile.latitude)
-        throw throwError('Please update your profile and add your location to create a service', HttpStatus.BAD_REQUEST);
+        throw throwError(
+          'Please update your profile and add your location to create a service',
+          HttpStatus.BAD_REQUEST,
+        );
 
       const category = await this.prismaService.serviceCategory.findUnique({
         where: { id: categoryId },
@@ -236,6 +251,15 @@ export class ServiceService {
         data: serviceWithPopulatedData,
       };
     } catch (err) {
+      this.logger.error('Failed to create service', err.stack, ServiceService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'createService',
+        userId: user.id,
+        serviceData: createServiceDto,
+        imageCount: images?.length,
+      });
       throw throwError(err.message || 'Failed to create service', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -257,8 +281,7 @@ export class ServiceService {
       if (existingService.providerId !== user.id)
         throw throwError('You do not have permission to update this service', HttpStatus.FORBIDDEN);
 
-      const { name, description, price, duration, categoryId, address, isActive } =
-        updateServiceDto;
+      const { name, description, price, duration, categoryId, address, isActive } = updateServiceDto;
 
       if (categoryId) {
         const category = await this.prismaService.serviceCategory.findUnique({
@@ -306,6 +329,16 @@ export class ServiceService {
         data: serviceWithPopulatedData,
       };
     } catch (err) {
+      this.logger.error('Failed to update service', err.stack, ServiceService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'updateService',
+        userId: user.id,
+        serviceId,
+        updateData: updateServiceDto,
+        imageCount: images?.length,
+      });
       throw throwError(err.message || 'Failed to update service', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -336,6 +369,14 @@ export class ServiceService {
         success: true,
       };
     } catch (err) {
+      this.logger.error('Failed to delete service', err.stack, ServiceService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'deleteService',
+        userId: user.id,
+        serviceId,
+      });
       throw throwError(err.message || 'Failed to delete service', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -359,6 +400,13 @@ export class ServiceService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve service', err.stack, ServiceService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getServiceById',
+        serviceId,
+      });
       throw throwError(err.message || 'Failed to retrieve service', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -391,8 +439,10 @@ export class ServiceService {
       const hasNextPage = Number(page) < totalPages;
       const hasPrevPage = Number(page) > 1;
 
-      const servicesWithPopulatedData = await Promise.all(services.map((service) => this.populateServiceImages(service)));
-      
+      const servicesWithPopulatedData = await Promise.all(
+        services.map((service) => this.populateServiceImages(service)),
+      );
+
       return {
         message: 'My services retrieved successfully',
         success: true,
@@ -409,6 +459,14 @@ export class ServiceService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve my services', err.stack, ServiceService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getMyServices',
+        userId: user.id,
+        query,
+      });
       throw throwError(err.message || 'Failed to retrieve my services', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

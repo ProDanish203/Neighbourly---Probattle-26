@@ -10,8 +10,9 @@ import { Pagination } from '../_components/pagination';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2 } from 'lucide-react';
+import { Suspense } from 'react';
 
-export default function BookingsPage() {
+function BookingsContent() {
   const { user } = useAuthStore();
   const searchParams = useSearchParams();
   const page = Number(searchParams.get('page')) || 1;
@@ -106,10 +107,38 @@ export default function BookingsPage() {
           </CardHeader>
           <CardContent>
             <BookingsTable bookings={bookings} isLoading={false} userRole={user.role} />
-            {pagination && <Pagination pagination={pagination} />}
+            {pagination && (
+              <Suspense fallback={<Skeleton className="h-10 w-full" />}>
+                <Pagination pagination={pagination} />
+              </Suspense>
+            )}
           </CardContent>
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function BookingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container px-4 py-8">
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-4 w-96" />
+            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <Skeleton className="h-64 w-full" />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      }
+    >
+      <BookingsContent />
+    </Suspense>
   );
 }

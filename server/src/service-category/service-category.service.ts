@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { StorageService } from 'src/storage/storage.service';
+import { AppLoggerService } from 'src/common/services/logger.service';
 import { User } from '@db';
 import { ApiResponse, MulterFile, QueryParams } from 'src/common/types';
 import { throwError } from 'src/common/utils/helpers';
@@ -11,6 +12,8 @@ import { Prisma } from '@db';
 
 @Injectable()
 export class ServiceCategoryService {
+  private readonly logger = new AppLoggerService(ServiceCategoryService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
@@ -61,6 +64,13 @@ export class ServiceCategoryService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve categories', err.stack, ServiceCategoryService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getAllCategories',
+        query,
+      });
       throw throwError(err.message || 'Failed to retrieve categories', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -118,6 +128,14 @@ export class ServiceCategoryService {
         data: categoryWithImage,
       };
     } catch (err) {
+      this.logger.error('Failed to create category', err.stack, ServiceCategoryService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'createCategory',
+        userId: user.id,
+        categoryData: createCategoryDto,
+      });
       throw throwError(err.message || 'Failed to create category', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -199,6 +217,15 @@ export class ServiceCategoryService {
         data: categoryWithImage,
       };
     } catch (err) {
+      this.logger.error('Failed to update category', err.stack, ServiceCategoryService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'updateCategory',
+        userId: user.id,
+        categoryId: id,
+        updateData: updateCategoryDto,
+      });
       throw throwError(err.message || 'Failed to update category', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -232,6 +259,14 @@ export class ServiceCategoryService {
         success: true,
       };
     } catch (err) {
+      this.logger.error('Failed to delete category', err.stack, ServiceCategoryService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'deleteCategory',
+        userId: user.id,
+        categoryId: id,
+      });
       throw throwError(err.message || 'Failed to delete category', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -279,6 +314,13 @@ export class ServiceCategoryService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve parent categories', err.stack, ServiceCategoryService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getAllParents',
+        query,
+      });
       throw throwError(
         err.message || 'Failed to retrieve parent categories',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,
@@ -334,6 +376,14 @@ export class ServiceCategoryService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve categories by parent', err.stack, ServiceCategoryService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getByParent',
+        parentId,
+        query,
+      });
       throw throwError(
         err.message || 'Failed to retrieve categories by parent',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,

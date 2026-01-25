@@ -22,12 +22,31 @@ import { ServiceCategoryService } from './service-category.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/service-category.dto';
 import { GetAllServiceCategoryResponse, GetAllParentsResponse, GetByParentResponse } from './types';
 import { ServiceCategorySelect } from './queries';
+import { RedisService } from 'src/common/services/redis.service';
 
 @Controller('service-category')
 @ApiTags('Service Category')
 @UseGuards(AuthGuard)
 export class ServiceCategoryController {
-  constructor(private readonly serviceCategoryService: ServiceCategoryService) {}
+  private readonly CACHE_TTL = 300;
+
+  constructor(
+    private readonly serviceCategoryService: ServiceCategoryService,
+    private readonly redisService: RedisService,
+  ) {}
+
+  private getCacheKey(prefix: string, ...params: (string | number | undefined)[]): string {
+    const keyParts = params.filter((p) => p !== undefined && p !== null && p !== '');
+    return `category:${prefix}:${keyParts.join(':')}`;
+  }
+
+  private async invalidateCategoryCache(): Promise<void> {
+    const client = this.redisService.getClient();
+    const keys = await client.keys('category:*');
+    if (keys.length > 0) {
+      await this.redisService.deleteMany(keys);
+    }
+  }
 
   @Roles(...Object.values(UserRole))
   @ApiProperty({ title: 'Get All Service Categories', description: 'Get all service categories with images populated' })
@@ -35,7 +54,16 @@ export class ServiceCategoryController {
   @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get()
   async getAllCategories(@Query() query: QueryParams): Promise<ApiResponse<GetAllServiceCategoryResponse>> {
-    return await this.serviceCategoryService.getAllCategories(query);
+    const { page = 1, limit = 20 } = query || {};
+    const cacheKey = this.getCacheKey('all', page, limit);
+
+    const cached = await this.redisService.get<ApiResponse<GetAllServiceCategoryResponse>>(cacheKey);
+    if (cached) return cached;
+
+    const response = await this.serviceCategoryService.getAllCategories(query);
+    await this.redisService.set(cacheKey, response, this.CACHE_TTL);
+
+    return response;
   }
 
   @Roles(UserRole.PROVIDER)
@@ -48,7 +76,9 @@ export class ServiceCategoryController {
     @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFile('image') image?: MulterFile,
   ): Promise<ApiResponse<ServiceCategorySelect>> {
-    return await this.serviceCategoryService.createCategory(user, createCategoryDto, image);
+    const response = await this.serviceCategoryService.createCategory(user, createCategoryDto, image);
+    await this.invalidateCategoryCache();
+    return response;
   }
 
   @Roles(UserRole.PROVIDER)
@@ -63,7 +93,9 @@ export class ServiceCategoryController {
     @Body() updateCategoryDto: UpdateCategoryDto,
     @UploadedFile('image') image?: MulterFile,
   ): Promise<ApiResponse<ServiceCategorySelect>> {
-    return await this.serviceCategoryService.updateCategory(user, id, updateCategoryDto, image);
+    const response = await this.serviceCategoryService.updateCategory(user, id, updateCategoryDto, image);
+    await this.invalidateCategoryCache();
+    return response;
   }
 
   @Roles(UserRole.PROVIDER)
@@ -71,7 +103,9 @@ export class ServiceCategoryController {
   @ApiParam({ name: 'id', type: String, description: 'Category ID' })
   @Delete(':id')
   async deleteCategory(@CurrentUser() user: User, @Param('id') id: string): Promise<ApiResponse<void>> {
-    return await this.serviceCategoryService.deleteCategory(user, id);
+    const response = await this.serviceCategoryService.deleteCategory(user, id);
+    await this.invalidateCategoryCache();
+    return response;
   }
 
   @Roles(...Object.values(UserRole))
@@ -83,7 +117,16 @@ export class ServiceCategoryController {
   @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get('parents')
   async getAllParents(@Query() query: QueryParams): Promise<ApiResponse<GetAllParentsResponse>> {
-    return await this.serviceCategoryService.getAllParents(query);
+    const { page = 1, limit = 20 } = query || {};
+    const cacheKey = this.getCacheKey('parents', page, limit);
+
+    const cached = await this.redisService.get<ApiResponse<GetAllParentsResponse>>(cacheKey);
+    if (cached) return cached;
+
+    const response = await this.serviceCategoryService.getAllParents(query);
+    await this.redisService.set(cacheKey, response, this.CACHE_TTL);
+
+    return response;
   }
 
   @Roles(...Object.values(UserRole))
@@ -96,6 +139,15 @@ export class ServiceCategoryController {
     @Param('parentId') parentId: string,
     @Query() query: QueryParams,
   ): Promise<ApiResponse<GetByParentResponse>> {
-    return await this.serviceCategoryService.getByParent(parentId, query);
+    const { page = 1, limit = 20 } = query || {};
+    const cacheKey = this.getCacheKey('parent', parentId, page, limit);
+
+    const cached = await this.redisService.get<ApiResponse<GetByParentResponse>>(cacheKey);
+    if (cached) return cached;
+
+    const response = await this.serviceCategoryService.getByParent(parentId, query);
+    await this.redisService.set(cacheKey, response, this.CACHE_TTL);
+
+    return response;
   }
 }

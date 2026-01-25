@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { AppLoggerService } from 'src/common/services/logger.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtPayload, LoginUserResponse, OtpVerificationResponse, RegisterUserResponse } from './types';
 import { generateSecureOTP, throwError } from 'src/common/utils/helpers';
@@ -23,6 +24,8 @@ import { MailerService } from 'src/mailer/mailer.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new AppLoggerService(AuthService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -77,6 +80,13 @@ export class AuthService {
         data: { user, token },
       };
     } catch (error) {
+      this.logger.error('Registration failed', error.stack, AuthService.name);
+      this.logger.logData({
+        error: error.message,
+        status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'register',
+        email: registerDto.email,
+      });
       throw throwError(error.message || 'Registration failed', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -109,6 +119,13 @@ export class AuthService {
         data: { user: userWithoutPassword, token },
       };
     } catch (error) {
+      this.logger.error('Login failed', error.stack, AuthService.name);
+      this.logger.logData({
+        error: error.message,
+        status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'login',
+        email: loginDto.email,
+      });
       throw throwError(error.message || 'Something went wrong', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -127,6 +144,13 @@ export class AuthService {
         success: true,
       };
     } catch (err) {
+      this.logger.error('Logout failed', err.stack, AuthService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'logout',
+        userId: user.id,
+      });
       throw throwError(err.message || 'Logout failed', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -262,6 +286,15 @@ export class AuthService {
         data: otp, // TODO: Remove this after testing
       };
     } catch (error) {
+      this.logger.error('Failed to send OTP', error.stack, AuthService.name);
+      this.logger.logData({
+        error: error.message,
+        status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'sendOtp',
+        email: dto.email,
+        type: dto.type,
+        channel: dto.otpChannel,
+      });
       throw throwError(error.message || 'Failed to send OTP', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -342,6 +375,15 @@ export class AuthService {
         success: true,
       };
     } catch (error) {
+      this.logger.error('Failed to resend OTP', error.stack, AuthService.name);
+      this.logger.logData({
+        error: error.message,
+        status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'resendOtp',
+        email: dto.email,
+        type: dto.type,
+        channel: dto.otpChannel,
+      });
       throw throwError(error.message || 'Failed to resend OTP', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -426,6 +468,15 @@ export class AuthService {
         },
       };
     } catch (err) {
+      this.logger.error('OTP verification failed', err.stack, AuthService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'verifyOtp',
+        email: dto.email,
+        type: dto.type,
+        channel: dto.otpChannel,
+      });
       throw throwError(err.message || 'OTP verification failed', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -513,6 +564,14 @@ export class AuthService {
         success: true,
       };
     } catch (err) {
+      this.logger.error('Failed to verify email', err.stack, AuthService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'verifyEmail',
+        userId: user.id,
+        email: user.email,
+      });
       throw throwError(err.message || 'Failed to verify email', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -537,6 +596,13 @@ export class AuthService {
         success: true,
       };
     } catch (err) {
+      this.logger.error('Failed to process forgot password request', err.stack, AuthService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'forgotPassword',
+        email,
+      });
       throw throwError(
         err.message || 'Failed to process forgot password request',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,
@@ -579,6 +645,12 @@ export class AuthService {
         success: true,
       };
     } catch (err) {
+      this.logger.error('Failed to reset password', err.stack, AuthService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'resetPassword',
+      });
       throw throwError(err.message || 'Failed to reset password', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -621,6 +693,12 @@ export class AuthService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to clean up tokens and OTPs', err.stack, AuthService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'cleanupTokensAndOtps',
+      });
       throw throwError(
         err.message || 'Failed to clean up tokens and OTPs',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,

@@ -2,6 +2,7 @@ import { Prisma, User, UserRole } from '@db';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { StorageService } from 'src/storage/storage.service';
+import { AppLoggerService } from 'src/common/services/logger.service';
 import { ApiResponse, QueryParams, MulterFile } from 'src/common/types';
 import { throwError } from 'src/common/utils/helpers';
 import { userSelect, UserSelect, completeUserSelect, CompleteUserSelect } from './queries';
@@ -10,6 +11,8 @@ import { UpdateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new AppLoggerService(UserService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
@@ -71,6 +74,13 @@ export class UserService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve users', err.stack, UserService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getAllUsersByRole',
+        query,
+      });
       throw throwError(err.message || 'Failed to retrieve users', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -92,6 +102,13 @@ export class UserService {
         data: userWithImage,
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve user', err.stack, UserService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getCurrentUser',
+        userId: user.id,
+      });
       throw throwError(err.message || 'Failed to retrieve user', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -163,6 +180,14 @@ export class UserService {
         data: userWithImage,
       };
     } catch (err) {
+      this.logger.error('Failed to update user', err.stack, UserService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'updateUser',
+        userId: user.id,
+        updateData: updateUserDto,
+      });
       throw throwError(err.message || 'Failed to update user', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -197,6 +222,14 @@ export class UserService {
         data: userWithImage,
       };
     } catch (err) {
+      this.logger.error('Failed to update avatar', err.stack, UserService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'updateAvatar',
+        userId: user.id,
+        filename: avatar?.filename,
+      });
       throw throwError(err.message || 'Failed to update avatar', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -223,6 +256,13 @@ export class UserService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve user profile', err.stack, UserService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getCompleteUserProfile',
+        userId,
+      });
       throw throwError(
         err.message || 'Failed to retrieve user profile',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,

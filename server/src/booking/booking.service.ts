@@ -2,6 +2,7 @@ import { Prisma, User, UserRole, BookingStatus } from '@db';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { StorageService } from 'src/storage/storage.service';
+import { AppLoggerService } from 'src/common/services/logger.service';
 import { ApiResponse, QueryParams } from 'src/common/types';
 import { throwError } from 'src/common/utils/helpers';
 import { bookingSelect, BookingSelect } from './queries';
@@ -12,6 +13,8 @@ import { CreateBookingDto, UpdateBookingDto, UpdateBookingStatusDto } from './dt
 
 @Injectable()
 export class BookingService {
+  private readonly logger = new AppLoggerService(BookingService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
@@ -61,14 +64,11 @@ export class BookingService {
         },
       });
 
-      if (!service) 
-        throw throwError('Service not found', HttpStatus.NOT_FOUND);
+      if (!service) throw throwError('Service not found', HttpStatus.NOT_FOUND);
 
-      if (!service.isActive) 
-        throw throwError('Service is not active and cannot be booked', HttpStatus.BAD_REQUEST);
+      if (!service.isActive) throw throwError('Service is not active and cannot be booked', HttpStatus.BAD_REQUEST);
 
-      if (service.providerId === user.id) 
-        throw throwError('You cannot book your own service', HttpStatus.BAD_REQUEST);
+      if (service.providerId === user.id) throw throwError('You cannot book your own service', HttpStatus.BAD_REQUEST);
 
       const startDate = new Date(startDateTime);
       const endDate = new Date(endDateTime);
@@ -78,22 +78,18 @@ export class BookingService {
         throw throwError('Invalid start date time format', HttpStatus.BAD_REQUEST);
       }
 
-      if (isNaN(endDate.getTime()))
-        throw throwError('Invalid end date time format', HttpStatus.BAD_REQUEST);
+      if (isNaN(endDate.getTime())) throw throwError('Invalid end date time format', HttpStatus.BAD_REQUEST);
 
-      if (startDate <= now) 
-        throw throwError('Start date time must be in the future', HttpStatus.BAD_REQUEST);
+      if (startDate <= now) throw throwError('Start date time must be in the future', HttpStatus.BAD_REQUEST);
 
-      if (endDate <= startDate) 
-        throw throwError('End date time must be after start date time', HttpStatus.BAD_REQUEST);
+      if (endDate <= startDate) throw throwError('End date time must be after start date time', HttpStatus.BAD_REQUEST);
 
       const durationMs = endDate.getTime() - startDate.getTime();
       const durationMinutes = durationMs / (1000 * 60);
       if (durationMinutes < 15)
         throw throwError('Booking duration must be at least 15 minutes', HttpStatus.BAD_REQUEST);
 
-      if (service.price <= 0)
-        throw throwError('Service price must be greater than 0', HttpStatus.BAD_REQUEST);
+      if (service.price <= 0) throw throwError('Service price must be greater than 0', HttpStatus.BAD_REQUEST);
 
       // Check for overlapping bookings for the same service
       // A booking overlaps if:
@@ -131,10 +127,7 @@ export class BookingService {
       });
 
       if (overlappingBooking) {
-        throw throwError(
-          'This time slot is already booked. Please choose a different time.',
-          HttpStatus.CONFLICT,
-        );
+        throw throwError('This time slot is already booked. Please choose a different time.', HttpStatus.CONFLICT);
       }
 
       // Create the booking with price from service
@@ -162,6 +155,14 @@ export class BookingService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to create booking', err.stack, BookingService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'createBooking',
+        userId: user.id,
+        bookingData: createBookingDto,
+      });
       throw throwError(err.message || 'Failed to create booking', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -210,6 +211,14 @@ export class BookingService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve bookings as seeker', err.stack, BookingService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getMyBookingsAsSeeker',
+        userId: user.id,
+        query,
+      });
       throw throwError(err.message || 'Failed to retrieve bookings', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -258,6 +267,14 @@ export class BookingService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve bookings as provider', err.stack, BookingService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getMyBookingsAsProvider',
+        userId: user.id,
+        query,
+      });
       throw throwError(err.message || 'Failed to retrieve bookings', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -281,6 +298,13 @@ export class BookingService {
         },
       };
     } catch (err) {
+      this.logger.error('Failed to retrieve booking', err.stack, BookingService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'getBookingById',
+        bookingId,
+      });
       throw throwError(err.message || 'Failed to retrieve booking', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -309,6 +333,14 @@ export class BookingService {
         success: true,
       };
     } catch (err) {
+      this.logger.error('Failed to update booking status', err.stack, BookingService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'updateBookingStatus',
+        bookingId,
+        statusData: updateStatusDto,
+      });
       throw throwError(
         err.message || 'Failed to update booking status',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,
@@ -409,6 +441,15 @@ export class BookingService {
         data: bookingWithPopulatedData,
       };
     } catch (err) {
+      this.logger.error('Failed to update booking', err.stack, BookingService.name);
+      this.logger.logData({
+        error: err.message,
+        status: err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        method: 'updateBooking',
+        userId: user.id,
+        bookingId,
+        updateData: updateBookingDto,
+      });
       throw throwError(err.message || 'Failed to update booking', err.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

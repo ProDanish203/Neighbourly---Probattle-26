@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
@@ -175,7 +175,7 @@ function CategoryCard({
   );
 }
 
-export default function ServiceCategoryPage() {
+function ServiceCategoryContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -474,7 +474,11 @@ export default function ServiceCategoryPage() {
                   ))}
             </div>
 
-            {pagination && <Pagination pagination={pagination} />}
+            {pagination && (
+              <Suspense fallback={<Skeleton className="h-10 w-full" />}>
+                <Pagination pagination={pagination} />
+              </Suspense>
+            )}
           </>
         )}
       </div>
@@ -491,5 +495,42 @@ export default function ServiceCategoryPage() {
         category={editingCategory}
       />
     </div>
+  );
+}
+
+export default function ServiceCategoryPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container px-4 py-8">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Skeleton className="h-8 w-64" />
+                <Skeleton className="h-4 w-96" />
+              </div>
+              <Skeleton className="h-10 w-40" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-3">
+                      <Skeleton className="h-16 w-16 rounded-md shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-5 w-3/4" />
+                        <Skeleton className="h-4 w-full" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <ServiceCategoryContent />
+    </Suspense>
   );
 }

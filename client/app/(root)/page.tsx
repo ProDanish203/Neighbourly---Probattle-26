@@ -5,6 +5,8 @@ import { UserRole } from '@/lib/enums';
 import { ProviderServicesPage } from './_components/provider-services-page';
 import { SeekerServicesPage } from './_components/seeker-services-page';
 import { Loader2 } from 'lucide-react';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
   const { user } = useAuthStore();
@@ -19,7 +21,9 @@ export default function Home() {
 
   return (
     <main className="container px-4 py-8">
-      {user.role === UserRole.PROVIDER ? <ProviderServicesPage /> : <SeekerServicesPage />}
+      <Suspense fallback={<Skeleton className="h-10 w-full" />}>
+        {user.role === UserRole.PROVIDER ? <ProviderServicesPage /> : <SeekerServicesPage />}
+      </Suspense>
     </main>
   );
 }

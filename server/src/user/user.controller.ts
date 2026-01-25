@@ -10,12 +10,28 @@ import { QueryParams, MulterFile, ApiResponse } from 'src/common/types';
 import { UpdateUserDto } from './dto/user.dto';
 import { UserSelect } from './queries';
 import { GetAllUserResponse, CompleteUserProfileResponse } from './types';
+import { RedisService } from 'src/common/services/redis.service';
 
 @Controller('user')
 @ApiTags('User')
 @UseGuards(AuthGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  private readonly CACHE_TTL = 300;
+
+  constructor(
+    private readonly userService: UserService,
+    private readonly redisService: RedisService,
+  ) {}
+
+  private getCacheKey(prefix: string, ...params: (string | number | undefined)[]): string {
+    const keyParts = params.filter((p) => p !== undefined && p !== null && p !== '');
+    return `user:${prefix}:${keyParts.join(':')}`;
+  }
+
+  private async invalidateUserCache(userId: string): Promise<void> {
+    const keys = [this.getCacheKey('current', userId), this.getCacheKey('profile', userId)];
+    await this.redisService.deleteMany(keys);
+  }
 
   @Roles(...Object.values(UserRole))
   @ApiProperty({ title: 'Get All Users', description: 'Get all users by role' })
@@ -31,21 +47,40 @@ export class UserController {
     @Param('role') role: UserRole,
     @Query() query: QueryParams,
   ): Promise<ApiResponse<GetAllUserResponse>> {
-    return await this.userService.getAllUsersByRole(user, role, query);
+    const { page = 1, limit = 20, search = '', filter = '', sort = '' } = query || {};
+    const cacheKey = this.getCacheKey('all', role, page, limit, search, filter, sort);
+
+    const cached = await this.redisService.get<ApiResponse<GetAllUserResponse>>(cacheKey);
+    if (cached) return cached;
+
+    const response = await this.userService.getAllUsersByRole(user, role, query);
+    await this.redisService.set(cacheKey, response, this.CACHE_TTL);
+
+    return response;
   }
 
   @Roles(...Object.values(UserRole))
   @ApiProperty({ title: 'Get Current User', description: 'Get current authenticated user' })
   @Get('me')
   async getCurrentUser(@CurrentUser() user: User): Promise<ApiResponse<UserSelect>> {
-    return this.userService.getCurrentUser(user);
+    const cacheKey = this.getCacheKey('current', user.id);
+
+    const cached = await this.redisService.get<ApiResponse<UserSelect>>(cacheKey);
+    if (cached) return cached;
+
+    const response = await this.userService.getCurrentUser(user);
+    await this.redisService.set(cacheKey, response, this.CACHE_TTL);
+
+    return response;
   }
 
   @Roles(...Object.values(UserRole))
   @ApiProperty({ title: 'Update User', description: 'Update user profile information', type: UpdateUserDto })
   @Put('me')
   async updateUser(@CurrentUser() user: User, @Body() updateUserDto: UpdateUserDto): Promise<ApiResponse<UserSelect>> {
-    return await this.userService.updateUser(user, updateUserDto);
+    const response = await this.userService.updateUser(user, updateUserDto);
+    await this.invalidateUserCache(user.id);
+    return response;
   }
 
   @Roles(...Object.values(UserRole))
@@ -53,11 +88,10 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
   @Put('me/avatar')
-  async updateAvatar(
-    @CurrentUser() user: User,
-    @UploadedFile() avatar: MulterFile,
-  ): Promise<ApiResponse<UserSelect>> {
-    return await this.userService.updateAvatar(user, avatar);
+  async updateAvatar(@CurrentUser() user: User, @UploadedFile() avatar: MulterFile): Promise<ApiResponse<UserSelect>> {
+    const response = await this.userService.updateAvatar(user, avatar);
+    await this.invalidateUserCache(user.id);
+    return response;
   }
 
   @Roles(...Object.values(UserRole))
@@ -68,6 +102,14 @@ export class UserController {
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
   @Get('profile/:id')
   async getCompleteUserProfile(@Param('id') id: string): Promise<ApiResponse<CompleteUserProfileResponse>> {
-    return await this.userService.getCompleteUserProfile(id);
+    const cacheKey = this.getCacheKey('profile', id);
+
+    const cached = await this.redisService.get<ApiResponse<CompleteUserProfileResponse>>(cacheKey);
+    if (cached) return cached;
+
+    const response = await this.userService.getCompleteUserProfile(id);
+    await this.redisService.set(cacheKey, response, this.CACHE_TTL);
+
+    return response;
   }
 }

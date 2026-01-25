@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { getMyServices } from '@/API/service.api';
@@ -198,7 +198,11 @@ export function ProviderServicesPage() {
           </div>
 
           {/* Pagination */}
-          {pagination && <Pagination pagination={pagination} />}
+          {pagination && (
+            <Suspense fallback={<Skeleton className="h-10 w-full" />}>
+              <Pagination pagination={pagination} />
+            </Suspense>
+          )}
         </>
       )}
 
