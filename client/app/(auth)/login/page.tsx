@@ -46,7 +46,8 @@ export default function LoginPage() {
       setUser(user);
       setToken(token);
       toast.success('Login successful');
-      router.push('/');
+      // Redirect to profile if email is not verified, otherwise go to home
+      router.push(user.isEmailVerified ? '/' : '/profile');
     }
   };
 

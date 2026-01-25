@@ -32,6 +32,11 @@ export function SeekerServicesPage() {
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
 
   const debouncedSearch = useDebounce(searchTerm, 500);
+  const debouncedCategoryId = useDebounce(categoryId, 500);
+  const debouncedMinPrice = useDebounce(minPrice, 500);
+  const debouncedMaxPrice = useDebounce(maxPrice, 500);
+  const debouncedRadius = useDebounce(radius, 500);
+  const debouncedSort = useDebounce(sort, 500);
 
   const page = debouncedSearch ? 1 : currentPage; // Reset to page 1 when searching
   const limit = Number(searchParams.get('limit')) || 10;
@@ -41,14 +46,18 @@ export function SeekerServicesPage() {
   }, [debouncedSearch]);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedCategoryId, debouncedMinPrice, debouncedMaxPrice, debouncedRadius, debouncedSort]);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const params = new URLSearchParams();
-    if (categoryId) params.set('categoryId', categoryId);
-    if (minPrice) params.set('minPrice', minPrice);
-    if (maxPrice) params.set('maxPrice', maxPrice);
-    if (radius) params.set('radius', radius.toString());
-    if (sort) params.set('sort', sort);
+    if (debouncedCategoryId) params.set('categoryId', debouncedCategoryId);
+    if (debouncedMinPrice) params.set('minPrice', debouncedMinPrice);
+    if (debouncedMaxPrice) params.set('maxPrice', debouncedMaxPrice);
+    if (debouncedRadius) params.set('radius', debouncedRadius.toString());
+    if (debouncedSort) params.set('sort', debouncedSort);
     params.set('page', currentPage.toString());
     params.set('limit', limit.toString());
 
@@ -58,7 +67,7 @@ export function SeekerServicesPage() {
     if (currentUrl !== newUrl) {
       router.replace(newUrl, { scroll: false });
     }
-  }, [categoryId, minPrice, maxPrice, radius, sort, currentPage, limit, router]);
+  }, [debouncedCategoryId, debouncedMinPrice, debouncedMaxPrice, debouncedRadius, debouncedSort, currentPage, limit, router]);
 
   const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
     queryKey: ['serviceCategories'],
@@ -74,7 +83,7 @@ export function SeekerServicesPage() {
   const categories = Array.isArray(categoriesData) ? categoriesData : categoriesData?.categories || [];
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['nearbyServices', page, limit, debouncedSearch, categoryId, minPrice, maxPrice, radius, sort],
+    queryKey: ['nearbyServices', page, limit, debouncedSearch, debouncedCategoryId, debouncedMinPrice, debouncedMaxPrice, debouncedRadius, debouncedSort],
     queryFn: async () => {
       const params: any = {
         page: debouncedSearch ? 1 : page, // Always use page 1 when searching
@@ -82,11 +91,11 @@ export function SeekerServicesPage() {
       };
 
       if (debouncedSearch) params.search = debouncedSearch;
-      if (categoryId) params.categoryId = categoryId;
-      if (minPrice) params.minPrice = Number(minPrice);
-      if (maxPrice) params.maxPrice = Number(maxPrice);
-      if (radius) params.radius = radius;
-      if (sort) params.sort = sort;
+      if (debouncedCategoryId) params.categoryId = debouncedCategoryId;
+      if (debouncedMinPrice) params.minPrice = Number(debouncedMinPrice);
+      if (debouncedMaxPrice) params.maxPrice = Number(debouncedMaxPrice);
+      if (debouncedRadius) params.radius = debouncedRadius;
+      if (debouncedSort) params.sort = debouncedSort;
 
       const result = await getNearbyServices(params);
       if (!result.success) {
@@ -110,7 +119,7 @@ export function SeekerServicesPage() {
     router.replace('?page=1&limit=10');
   };
 
-  const hasActiveFilters = !!(categoryId || minPrice || maxPrice || radius !== 3 || sort || debouncedSearch);
+  const hasActiveFilters = !!(debouncedCategoryId || debouncedMinPrice || debouncedMaxPrice || debouncedRadius !== 3 || debouncedSort || debouncedSearch);
 
   // Update currentPage when URL page param changes (from pagination)
   useEffect(() => {

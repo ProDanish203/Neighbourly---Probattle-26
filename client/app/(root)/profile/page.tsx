@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { updateUserSchema, type UpdateUserSchema } from '@/schema/user.schema';
 import { getCurrentUser, updateUser, updateAvatar, getCompleteUserProfile } from '@/API/user.api';
 import { useAuthStore } from '@/store/auth.store';
-import { EmailVerificationAlert } from '@/components/shared/email-verification-alert';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -216,8 +215,6 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="space-y-6">
-        {currentUser && !currentUser.isEmailVerified && <EmailVerificationAlert email={currentUser.email} />}
-
         <Card>
           <CardHeader>
             <CardTitle>Profile Settings</CardTitle>

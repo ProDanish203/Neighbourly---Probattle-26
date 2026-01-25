@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { AppLoggerService } from 'src/common/services/logger.service';
+import { RedisService } from 'src/common/services/redis.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtPayload, LoginUserResponse, OtpVerificationResponse, RegisterUserResponse } from './types';
 import { generateSecureOTP, throwError } from 'src/common/utils/helpers';
@@ -32,6 +33,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly redisService: RedisService,
     @InjectQueue(QUEUE_NAMES.EMAIL) private readonly emailQueue: Queue<SendOtpEmailJobData>,
   ) {}
 
@@ -484,6 +486,16 @@ export class AuthService {
     }
   }
 
+  private getCacheKey(prefix: string, ...params: (string | number | undefined)[]): string {
+    const keyParts = params.filter((p) => p !== undefined && p !== null && p !== '');
+    return `user:${prefix}:${keyParts.join(':')}`;
+  }
+
+  private async invalidateUserCache(userId: string): Promise<void> {
+    const keys = [this.getCacheKey('current', userId), this.getCacheKey('profile', userId)];
+    await this.redisService.deleteMany(keys);
+  }
+
   private async sendOtpViaChannel(identifier: string, type: OtpType, channel: OtpChannel, otp: string): Promise<void> {
     switch (channel) {
       case OtpChannel.EMAIL: {
@@ -521,11 +533,15 @@ export class AuthService {
   }
 
   private async handleVerifyEmail(userId: string): Promise<Omit<User, 'password' | 'salt'>> {
-    return await this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: { isEmailVerified: true },
       omit: { password: true, salt: true },
     });
+
+    await this.invalidateUserCache(userId);
+
+    return updatedUser;
   }
 
   private async handlePasswordReset(

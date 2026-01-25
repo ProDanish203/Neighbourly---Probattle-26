@@ -50,7 +50,7 @@ export default function RegisterPage() {
       setUser(user);
       setToken(token);
       toast.success('Registration successful');
-      router.push('/');
+      router.push('/profile');
     }
   };
 

@@ -8,6 +8,7 @@ import { MailerService } from 'src/mailer/mailer.service';
 import { BullModule } from '@nestjs/bullmq';
 import { QUEUE_NAMES } from './constants/queue.constants';
 import { EmailProcessor } from './processors/email.processor';
+import { RedisService } from 'src/common/services/redis.service';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { EmailProcessor } from './processors/email.processor';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, MailerService, EmailProcessor],
+  providers: [AuthService, PrismaService, MailerService, EmailProcessor, RedisService],
   exports: [AuthService],
 })
 export class AuthModule {}
