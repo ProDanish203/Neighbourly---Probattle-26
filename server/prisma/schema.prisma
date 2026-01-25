@@ -49,6 +49,12 @@ model User {
   providerBookings Booking[] @relation("ProviderBooking")
   seekerBookings Booking[] @relation("SeekerBooking")
 
+  // Chat Relations
+  userChats Chat[] @relation("UserChat")
+  providerChats Chat[] @relation("ProviderChat")
+
+  userMessages Message[] @relation("UserMessage")
+
   @@index([name])
   @@index([email])
 }
@@ -252,4 +258,38 @@ model Booking {
   @@index([seekerId])
   @@index([providerId])
   @@index([serviceId])
+}
+
+model Chat {
+  id        String   @id @unique @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  providerId String   @db.Uuid
+
+  user User @relation("UserChat", fields: [userId], references: [id], onDelete: Cascade)
+  provider User @relation("ProviderChat", fields: [providerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[] @relation("ChatMessage")
+
+  @@index([userId])
+  @@index([providerId])
+}
+
+model Message {
+  id        String   @id @unique @default(uuid()) @db.Uuid
+  chatId    String   @db.Uuid
+  senderId String   @db.Uuid
+  content String
+
+  chat Chat @relation("ChatMessage", fields: [chatId], references: [id], onDelete: Cascade)
+  sender User @relation("UserMessage", fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([chatId])
+  @@index([senderId])
+  @@index([createdAt])
 }

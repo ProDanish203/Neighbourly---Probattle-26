@@ -268,6 +268,9 @@ export type UserWhereInput = {
   services?: Prisma.ServiceListRelationFilter
   providerBookings?: Prisma.BookingListRelationFilter
   seekerBookings?: Prisma.BookingListRelationFilter
+  userChats?: Prisma.ChatListRelationFilter
+  providerChats?: Prisma.ChatListRelationFilter
+  userMessages?: Prisma.MessageListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -292,6 +295,9 @@ export type UserOrderByWithRelationInput = {
   services?: Prisma.ServiceOrderByRelationAggregateInput
   providerBookings?: Prisma.BookingOrderByRelationAggregateInput
   seekerBookings?: Prisma.BookingOrderByRelationAggregateInput
+  userChats?: Prisma.ChatOrderByRelationAggregateInput
+  providerChats?: Prisma.ChatOrderByRelationAggregateInput
+  userMessages?: Prisma.MessageOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -319,6 +325,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   services?: Prisma.ServiceListRelationFilter
   providerBookings?: Prisma.BookingListRelationFilter
   seekerBookings?: Prisma.BookingListRelationFilter
+  userChats?: Prisma.ChatListRelationFilter
+  providerChats?: Prisma.ChatListRelationFilter
+  userMessages?: Prisma.MessageListRelationFilter
 }, "id" | "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -385,6 +394,9 @@ export type UserCreateInput = {
   services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -409,6 +421,9 @@ export type UserUncheckedCreateInput = {
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserUpdateInput = {
@@ -433,6 +448,9 @@ export type UserUpdateInput = {
   services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -457,6 +475,9 @@ export type UserUncheckedUpdateInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -684,6 +705,48 @@ export type UserUpdateOneRequiredWithoutProviderBookingsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProviderBookingsInput, Prisma.UserUpdateWithoutProviderBookingsInput>, Prisma.UserUncheckedUpdateWithoutProviderBookingsInput>
 }
 
+export type UserCreateNestedOneWithoutUserChatsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserChatsInput, Prisma.UserUncheckedCreateWithoutUserChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutProviderChatsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProviderChatsInput, Prisma.UserUncheckedCreateWithoutProviderChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProviderChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserChatsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserChatsInput, Prisma.UserUncheckedCreateWithoutUserChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserChatsInput
+  upsert?: Prisma.UserUpsertWithoutUserChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserChatsInput, Prisma.UserUpdateWithoutUserChatsInput>, Prisma.UserUncheckedUpdateWithoutUserChatsInput>
+}
+
+export type UserUpdateOneRequiredWithoutProviderChatsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProviderChatsInput, Prisma.UserUncheckedCreateWithoutProviderChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProviderChatsInput
+  upsert?: Prisma.UserUpsertWithoutProviderChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProviderChatsInput, Prisma.UserUpdateWithoutProviderChatsInput>, Prisma.UserUncheckedUpdateWithoutProviderChatsInput>
+}
+
+export type UserCreateNestedOneWithoutUserMessagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserMessagesInput, Prisma.UserUncheckedCreateWithoutUserMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserMessagesInput, Prisma.UserUncheckedCreateWithoutUserMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserMessagesInput
+  upsert?: Prisma.UserUpsertWithoutUserMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserMessagesInput, Prisma.UserUpdateWithoutUserMessagesInput>, Prisma.UserUncheckedUpdateWithoutUserMessagesInput>
+}
+
 export type UserCreateWithoutOtpVerificationsInput = {
   id?: string
   name: string
@@ -705,6 +768,9 @@ export type UserCreateWithoutOtpVerificationsInput = {
   services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutOtpVerificationsInput = {
@@ -728,6 +794,9 @@ export type UserUncheckedCreateWithoutOtpVerificationsInput = {
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutOtpVerificationsInput = {
@@ -767,6 +836,9 @@ export type UserUpdateWithoutOtpVerificationsInput = {
   services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpVerificationsInput = {
@@ -790,6 +862,9 @@ export type UserUncheckedUpdateWithoutOtpVerificationsInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutVerificationTokensInput = {
@@ -813,6 +888,9 @@ export type UserCreateWithoutVerificationTokensInput = {
   services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutVerificationTokensInput = {
@@ -836,6 +914,9 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutVerificationTokensInput = {
@@ -875,6 +956,9 @@ export type UserUpdateWithoutVerificationTokensInput = {
   services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVerificationTokensInput = {
@@ -898,6 +982,9 @@ export type UserUncheckedUpdateWithoutVerificationTokensInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutUserProfileInput = {
@@ -921,6 +1008,9 @@ export type UserCreateWithoutUserProfileInput = {
   services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutUserProfileInput = {
@@ -944,6 +1034,9 @@ export type UserUncheckedCreateWithoutUserProfileInput = {
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutUserProfileInput = {
@@ -983,6 +1076,9 @@ export type UserUpdateWithoutUserProfileInput = {
   services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserProfileInput = {
@@ -1006,6 +1102,9 @@ export type UserUncheckedUpdateWithoutUserProfileInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutServicesInput = {
@@ -1029,6 +1128,9 @@ export type UserCreateWithoutServicesInput = {
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
   providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutServicesInput = {
@@ -1052,6 +1154,9 @@ export type UserUncheckedCreateWithoutServicesInput = {
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
   providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutServicesInput = {
@@ -1091,6 +1196,9 @@ export type UserUpdateWithoutServicesInput = {
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
   providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutServicesInput = {
@@ -1114,6 +1222,9 @@ export type UserUncheckedUpdateWithoutServicesInput = {
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
   providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutSeekerBookingsInput = {
@@ -1137,6 +1248,9 @@ export type UserCreateWithoutSeekerBookingsInput = {
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
   services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutSeekerBookingsInput = {
@@ -1160,6 +1274,9 @@ export type UserUncheckedCreateWithoutSeekerBookingsInput = {
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
   providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutSeekerBookingsInput = {
@@ -1188,6 +1305,9 @@ export type UserCreateWithoutProviderBookingsInput = {
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
   services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutProviderBookingsInput = {
@@ -1211,6 +1331,9 @@ export type UserUncheckedCreateWithoutProviderBookingsInput = {
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
   seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutProviderBookingsInput = {
@@ -1250,6 +1373,9 @@ export type UserUpdateWithoutSeekerBookingsInput = {
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
   services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSeekerBookingsInput = {
@@ -1273,6 +1399,9 @@ export type UserUncheckedUpdateWithoutSeekerBookingsInput = {
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
   services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
   providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUpsertWithoutProviderBookingsInput = {
@@ -1307,6 +1436,9 @@ export type UserUpdateWithoutProviderBookingsInput = {
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
   services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProviderBookingsInput = {
@@ -1330,6 +1462,369 @@ export type UserUncheckedUpdateWithoutProviderBookingsInput = {
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
   services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
   seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+}
+
+export type UserCreateWithoutUserChatsInput = {
+  id?: string
+  name: string
+  email: string
+  avatar?: string | null
+  password?: string | null
+  salt?: string | null
+  role: $Enums.UserRole
+  loginProvider?: $Enums.LoginProvider
+  hasNotifications?: boolean
+  isEmailVerified?: boolean
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  otpVerifications?: Prisma.OtpVerificationCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
+  services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
+  providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
+  seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+}
+
+export type UserUncheckedCreateWithoutUserChatsInput = {
+  id?: string
+  name: string
+  email: string
+  avatar?: string | null
+  password?: string | null
+  salt?: string | null
+  role: $Enums.UserRole
+  loginProvider?: $Enums.LoginProvider
+  hasNotifications?: boolean
+  isEmailVerified?: boolean
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  otpVerifications?: Prisma.OtpVerificationUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
+  providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
+  seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+}
+
+export type UserCreateOrConnectWithoutUserChatsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserChatsInput, Prisma.UserUncheckedCreateWithoutUserChatsInput>
+}
+
+export type UserCreateWithoutProviderChatsInput = {
+  id?: string
+  name: string
+  email: string
+  avatar?: string | null
+  password?: string | null
+  salt?: string | null
+  role: $Enums.UserRole
+  loginProvider?: $Enums.LoginProvider
+  hasNotifications?: boolean
+  isEmailVerified?: boolean
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  otpVerifications?: Prisma.OtpVerificationCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
+  services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
+  providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
+  seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  userMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+}
+
+export type UserUncheckedCreateWithoutProviderChatsInput = {
+  id?: string
+  name: string
+  email: string
+  avatar?: string | null
+  password?: string | null
+  salt?: string | null
+  role: $Enums.UserRole
+  loginProvider?: $Enums.LoginProvider
+  hasNotifications?: boolean
+  isEmailVerified?: boolean
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  otpVerifications?: Prisma.OtpVerificationUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
+  providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
+  seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  userMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+}
+
+export type UserCreateOrConnectWithoutProviderChatsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProviderChatsInput, Prisma.UserUncheckedCreateWithoutProviderChatsInput>
+}
+
+export type UserUpsertWithoutUserChatsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserChatsInput, Prisma.UserUncheckedUpdateWithoutUserChatsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserChatsInput, Prisma.UserUncheckedCreateWithoutUserChatsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUserChatsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserChatsInput, Prisma.UserUncheckedUpdateWithoutUserChatsInput>
+}
+
+export type UserUpdateWithoutUserChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  salt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  loginProvider?: Prisma.EnumLoginProviderFieldUpdateOperationsInput | $Enums.LoginProvider
+  hasNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  otpVerifications?: Prisma.OtpVerificationUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
+  providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
+  seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUserChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  salt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  loginProvider?: Prisma.EnumLoginProviderFieldUpdateOperationsInput | $Enums.LoginProvider
+  hasNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  otpVerifications?: Prisma.OtpVerificationUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
+  providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
+  seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUpsertWithoutProviderChatsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProviderChatsInput, Prisma.UserUncheckedUpdateWithoutProviderChatsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProviderChatsInput, Prisma.UserUncheckedCreateWithoutProviderChatsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProviderChatsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProviderChatsInput, Prisma.UserUncheckedUpdateWithoutProviderChatsInput>
+}
+
+export type UserUpdateWithoutProviderChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  salt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  loginProvider?: Prisma.EnumLoginProviderFieldUpdateOperationsInput | $Enums.LoginProvider
+  hasNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  otpVerifications?: Prisma.OtpVerificationUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
+  providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
+  seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  userMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProviderChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  salt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  loginProvider?: Prisma.EnumLoginProviderFieldUpdateOperationsInput | $Enums.LoginProvider
+  hasNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  otpVerifications?: Prisma.OtpVerificationUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
+  providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
+  seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  userMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+}
+
+export type UserCreateWithoutUserMessagesInput = {
+  id?: string
+  name: string
+  email: string
+  avatar?: string | null
+  password?: string | null
+  salt?: string | null
+  role: $Enums.UserRole
+  loginProvider?: $Enums.LoginProvider
+  hasNotifications?: boolean
+  isEmailVerified?: boolean
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  otpVerifications?: Prisma.OtpVerificationCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput
+  services?: Prisma.ServiceCreateNestedManyWithoutProviderInput
+  providerBookings?: Prisma.BookingCreateNestedManyWithoutProviderInput
+  seekerBookings?: Prisma.BookingCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatCreateNestedManyWithoutProviderInput
+}
+
+export type UserUncheckedCreateWithoutUserMessagesInput = {
+  id?: string
+  name: string
+  email: string
+  avatar?: string | null
+  password?: string | null
+  salt?: string | null
+  role: $Enums.UserRole
+  loginProvider?: $Enums.LoginProvider
+  hasNotifications?: boolean
+  isEmailVerified?: boolean
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  otpVerifications?: Prisma.OtpVerificationUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutProviderInput
+  providerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutProviderInput
+  seekerBookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSeekerInput
+  userChats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  providerChats?: Prisma.ChatUncheckedCreateNestedManyWithoutProviderInput
+}
+
+export type UserCreateOrConnectWithoutUserMessagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserMessagesInput, Prisma.UserUncheckedCreateWithoutUserMessagesInput>
+}
+
+export type UserUpsertWithoutUserMessagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserMessagesInput, Prisma.UserUncheckedUpdateWithoutUserMessagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserMessagesInput, Prisma.UserUncheckedCreateWithoutUserMessagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUserMessagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserMessagesInput, Prisma.UserUncheckedUpdateWithoutUserMessagesInput>
+}
+
+export type UserUpdateWithoutUserMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  salt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  loginProvider?: Prisma.EnumLoginProviderFieldUpdateOperationsInput | $Enums.LoginProvider
+  hasNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  otpVerifications?: Prisma.OtpVerificationUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutProviderNestedInput
+  providerBookings?: Prisma.BookingUpdateManyWithoutProviderNestedInput
+  seekerBookings?: Prisma.BookingUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUpdateManyWithoutProviderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUserMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  salt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  loginProvider?: Prisma.EnumLoginProviderFieldUpdateOperationsInput | $Enums.LoginProvider
+  hasNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  otpVerifications?: Prisma.OtpVerificationUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutProviderNestedInput
+  providerBookings?: Prisma.BookingUncheckedUpdateManyWithoutProviderNestedInput
+  seekerBookings?: Prisma.BookingUncheckedUpdateManyWithoutSeekerNestedInput
+  userChats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  providerChats?: Prisma.ChatUncheckedUpdateManyWithoutProviderNestedInput
 }
 
 
@@ -1343,6 +1838,9 @@ export type UserCountOutputType = {
   services: number
   providerBookings: number
   seekerBookings: number
+  userChats: number
+  providerChats: number
+  userMessages: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1351,6 +1849,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   services?: boolean | UserCountOutputTypeCountServicesArgs
   providerBookings?: boolean | UserCountOutputTypeCountProviderBookingsArgs
   seekerBookings?: boolean | UserCountOutputTypeCountSeekerBookingsArgs
+  userChats?: boolean | UserCountOutputTypeCountUserChatsArgs
+  providerChats?: boolean | UserCountOutputTypeCountProviderChatsArgs
+  userMessages?: boolean | UserCountOutputTypeCountUserMessagesArgs
 }
 
 /**
@@ -1398,6 +1899,27 @@ export type UserCountOutputTypeCountSeekerBookingsArgs<ExtArgs extends runtime.T
   where?: Prisma.BookingWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUserChatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProviderChatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUserMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1421,6 +1943,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   services?: boolean | Prisma.User$servicesArgs<ExtArgs>
   providerBookings?: boolean | Prisma.User$providerBookingsArgs<ExtArgs>
   seekerBookings?: boolean | Prisma.User$seekerBookingsArgs<ExtArgs>
+  userChats?: boolean | Prisma.User$userChatsArgs<ExtArgs>
+  providerChats?: boolean | Prisma.User$providerChatsArgs<ExtArgs>
+  userMessages?: boolean | Prisma.User$userMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1486,6 +2011,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   services?: boolean | Prisma.User$servicesArgs<ExtArgs>
   providerBookings?: boolean | Prisma.User$providerBookingsArgs<ExtArgs>
   seekerBookings?: boolean | Prisma.User$seekerBookingsArgs<ExtArgs>
+  userChats?: boolean | Prisma.User$userChatsArgs<ExtArgs>
+  providerChats?: boolean | Prisma.User$providerChatsArgs<ExtArgs>
+  userMessages?: boolean | Prisma.User$userMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1500,6 +2028,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     services: Prisma.$ServicePayload<ExtArgs>[]
     providerBookings: Prisma.$BookingPayload<ExtArgs>[]
     seekerBookings: Prisma.$BookingPayload<ExtArgs>[]
+    userChats: Prisma.$ChatPayload<ExtArgs>[]
+    providerChats: Prisma.$ChatPayload<ExtArgs>[]
+    userMessages: Prisma.$MessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1917,6 +2448,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   services<T extends Prisma.User$servicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   providerBookings<T extends Prisma.User$providerBookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$providerBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   seekerBookings<T extends Prisma.User$seekerBookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$seekerBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userChats<T extends Prisma.User$userChatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userChatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  providerChats<T extends Prisma.User$providerChatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$providerChatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userMessages<T extends Prisma.User$userMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2485,6 +3019,78 @@ export type User$seekerBookingsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
+}
+
+/**
+ * User.userChats
+ */
+export type User$userChatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Chat
+   */
+  select?: Prisma.ChatSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Chat
+   */
+  omit?: Prisma.ChatOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatInclude<ExtArgs> | null
+  where?: Prisma.ChatWhereInput
+  orderBy?: Prisma.ChatOrderByWithRelationInput | Prisma.ChatOrderByWithRelationInput[]
+  cursor?: Prisma.ChatWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatScalarFieldEnum | Prisma.ChatScalarFieldEnum[]
+}
+
+/**
+ * User.providerChats
+ */
+export type User$providerChatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Chat
+   */
+  select?: Prisma.ChatSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Chat
+   */
+  omit?: Prisma.ChatOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatInclude<ExtArgs> | null
+  where?: Prisma.ChatWhereInput
+  orderBy?: Prisma.ChatOrderByWithRelationInput | Prisma.ChatOrderByWithRelationInput[]
+  cursor?: Prisma.ChatWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatScalarFieldEnum | Prisma.ChatScalarFieldEnum[]
+}
+
+/**
+ * User.userMessages
+ */
+export type User$userMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Message
+   */
+  select?: Prisma.MessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Message
+   */
+  omit?: Prisma.MessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null
+  where?: Prisma.MessageWhereInput
+  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
+  cursor?: Prisma.MessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
 }
 
 /**

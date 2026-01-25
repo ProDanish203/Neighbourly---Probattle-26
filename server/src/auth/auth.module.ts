@@ -5,6 +5,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { MailerService } from 'src/mailer/mailer.service';
+import { BullModule } from '@nestjs/bullmq';
+import { QUEUE_NAMES } from './constants/queue.constants';
+import { EmailProcessor } from './processors/email.processor';
 
 @Module({
   imports: [
@@ -23,9 +26,12 @@ import { MailerService } from 'src/mailer/mailer.service';
       },
       inject: [ConfigService],
     }),
+    BullModule.registerQueue({
+      name: QUEUE_NAMES.EMAIL,
+    }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, MailerService],
+  providers: [AuthService, PrismaService, MailerService, EmailProcessor],
   exports: [AuthService],
 })
 export class AuthModule {}

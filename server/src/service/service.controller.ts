@@ -66,29 +66,11 @@ export class ServiceController {
     @CurrentUser() user: User,
     @Query() query: ServiceQueryParams,
   ): Promise<ApiResponse<GetNearbyServicesResponse>> {
-    const {
-      page = 1,
-      limit = 20,
-      search = '',
-      categoryId,
-      minPrice,
-      maxPrice,
-      radius,
-    } = query || {};
+    const { page = 1, limit = 20, search = '', categoryId, minPrice, maxPrice, radius } = query || {};
 
     // Note: Cache key includes user.id, but actual location is fetched in service
     // This means cache might be less precise, but avoids accessing prismaService in controller
-    const cacheKey = this.getCacheKey(
-      'nearby',
-      user.id,
-      page,
-      limit,
-      search,
-      categoryId,
-      minPrice,
-      maxPrice,
-      radius,
-    );
+    const cacheKey = this.getCacheKey('nearby', user.id, page, limit, search, categoryId, minPrice, maxPrice, radius);
 
     const cached = await this.redisService.get<ApiResponse<GetNearbyServicesResponse>>(cacheKey);
     if (cached) return cached;

@@ -20,7 +20,10 @@ import {
 } from 'src/common/lib/constants';
 import { SendOtpDto, VerifyOtpDto } from './dto/otp.dto';
 import * as bcrypt from 'bcryptjs';
-import { MailerService } from 'src/mailer/mailer.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { QUEUE_NAMES, EMAIL_QUEUE_JOBS } from './constants/queue.constants';
+import { SendOtpEmailJobData } from './processors/email.processor';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +32,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly mailerService: MailerService,
+    @InjectQueue(QUEUE_NAMES.EMAIL) private readonly emailQueue: Queue<SendOtpEmailJobData>,
   ) {}
 
   private async signJwtTokenToCookies(res: Response, payload: JwtPayload): Promise<string> {
@@ -484,8 +487,12 @@ export class AuthService {
   private async sendOtpViaChannel(identifier: string, type: OtpType, channel: OtpChannel, otp: string): Promise<void> {
     switch (channel) {
       case OtpChannel.EMAIL: {
-        console.log(`Sending OTP ${otp} to ${identifier} via Email for ${type}`);
-        this.mailerService.sendOtpEmail(identifier, otp, type);
+        this.logger.log(`Adding OTP email job to queue for ${identifier} (${type})`);
+        await this.emailQueue.add(EMAIL_QUEUE_JOBS.SEND_OTP_EMAIL, {
+          email: identifier,
+          otp,
+          type,
+        } as SendOtpEmailJobData);
         break;
       }
       case OtpChannel.SMS: {

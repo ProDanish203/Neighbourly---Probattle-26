@@ -9,12 +9,15 @@ import { BookingModule } from './booking/booking.module';
 import { ServiceModule } from './service/service.module';
 import { MailerModule } from './mailer/mailer.module';
 import { ServiceCategoryModule } from './service-category/service-category.module';
+import { ChatModule } from './chat/chat.module';
+import { BullMQModule } from './common/modules/bullmq.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    BullMQModule,
     AuthModule,
     StorageModule,
     UserModule,
@@ -22,6 +25,7 @@ import { ServiceCategoryModule } from './service-category/service-category.modul
     ServiceModule,
     MailerModule,
     ServiceCategoryModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
